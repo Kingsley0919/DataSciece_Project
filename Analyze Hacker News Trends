@@ -1,1 +1,48 @@
+--Top five stories with the highest score
+SELECT title, score
+FROM hacker_news
+ORDER BY score DESC
+LIMIT 5;
+
+--These 4 users have a combined 20% of the total scores in the table. 
+SELECT hn.user, SUM(hn.score) AS user_score,
+       ROUND((SUM(hn.score) * 100 / total_score.total_sum), 2) AS percentage
+FROM hacker_news hn
+JOIN (SELECT SUM(score) AS total_sum FROM hacker_news) AS total_score
+GROUP BY hn.user
+HAVING user_score > 200
+ORDER BY percentage DESC;
+
+
+-- Hacker scam link
+SELECT user,
+   COUNT(*)
+FROM hacker_news
+WHERE url LIKE '%watch?v=dQw4w9WgXcQ%'
+GROUP BY 1
+ORDER BY 2 DESC;
+
+--Correct Name
+SELECT CASE
+   WHEN url LIKE '%github.com%' THEN 'GitHub'
+   WHEN url LIKE '%medium.com%' THEN 'Medium'
+   WHEN url LIKE '%nytimes.com%' THEN 'New York Times'
+   ELSE 'Other'
+  END AS 'Source',
+  COUNT(*)
+FROM hacker_news
+GROUP BY 1;
+
+-- Best time of the day to post a story
+SELECT strftime('%H',timestamp) AS time,
+    ROUND(AVG(score),2) AS Average_score,
+    COUNT(*) AS Post_Number
+FROM hacker_news
+WHERE time IS NOT Null 
+GROUP BY 1
+ORDER BY 2 DESC;
+
+
+
+
 
